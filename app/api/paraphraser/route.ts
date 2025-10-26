@@ -8,12 +8,20 @@ import {
 import { getToken } from "next-auth/jwt";
 
 export async function POST(req: NextRequest) {
+  const cookieName =
+    process.env.NODE_ENV === "production"
+      ? "__Secure-authjs.session-token"
+      : "authjs.session-token";
   const { language, tone, text }: ParaphrasingProps = await req.json();
   if (!text)
     return Response.json({ error: "Field are missing " }, { status: 200 });
-  const token = await getToken({ req , secret : process.env.NEXTAUTH_SECRET});
-    if (!token)
-      return Response.json({ error: "unauthorize" }, { status: 401 });
+  const token = await getToken({
+    req,
+    secret: process.env.NEXTAUTH_SECRET,
+    cookieName: cookieName,
+    secureCookie: process.env.NODE_ENV === "production",
+  });
+  if (!token) return Response.json({ error: "unauthorize" }, { status: 401 });
   try {
     const chain = TogetherPrompt.pipe(model);
     const stream = new ReadableStream({

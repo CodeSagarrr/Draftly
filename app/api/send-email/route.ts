@@ -15,12 +15,20 @@ const transport = nodemailer.createTransport({
 });
 
 export async function POST(req: NextRequest) {
-  const token = await getToken({ req , secret : process.env.NEXTAUTH_SECRET});
-    if (!token)
-      return Response.json({ error: "unauthorize" }, { status: 401 });
+  const cookieName =
+    process.env.NODE_ENV === "production"
+      ? "__Secure-authjs.session-token"
+      : "authjs.session-token";
+  const token = await getToken({
+    req,
+    secret: process.env.NEXTAUTH_SECRET,
+    cookieName: cookieName,
+    secureCookie: process.env.NODE_ENV === "production",
+  });
+  if (!token) return Response.json({ error: "unauthorize" }, { status: 401 });
 
-    console.log(token)
-  
+  console.log(token);
+
   const { to, subject, text } = await req.json();
   if (!to || !subject)
     return NextResponse.json(

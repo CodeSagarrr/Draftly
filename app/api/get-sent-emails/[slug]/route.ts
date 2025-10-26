@@ -10,12 +10,21 @@ const selectKeys = {
 };
 
 export async function GET(req: NextRequest, { params }: any) {
+  const cookieName =
+  process.env.NODE_ENV === "production"
+    ? "__Secure-authjs.session-token"
+    : "authjs.session-token";
   const { slug } = await params;
   const skip = Number(slug) || 1;
   const limit = 4;
 
   try {
-    const token = await getToken({ req ,secret : process.env.NEXTAUTH_SECRET });
+    const token = await getToken({
+      req,
+      secret: process.env.NEXTAUTH_SECRET,
+      cookieName: cookieName,
+      secureCookie: process.env.NODE_ENV === "production",
+    });
     if (!token)
       return Response.json({ error: "unauthorize" }, { status: 401 });
     

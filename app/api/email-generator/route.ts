@@ -4,7 +4,16 @@ import { model, prompt, EmailGeneratorRequest } from "@/app/api/utils/model";
 import prisma from "@/lib/prisma";
 
 export async function POST(req: NextRequest) {
-  const token = await getToken({ req , secret:process.env.NEXTAUTH_SECRET});
+  const cookieName =
+    process.env.NODE_ENV === "production"
+      ? "__Secure-authjs.session-token"
+      : "authjs.session-token";
+  const token = await getToken({
+    req,
+    secret: process.env.NEXTAUTH_SECRET,
+    cookieName: cookieName,
+    secureCookie: process.env.NODE_ENV === "production",
+  });
   if (!token) return Response.json({ error: "unauthorize" }, { status: 401 });
   const { language, tone, length, topic }: EmailGeneratorRequest =
     await req.json();
