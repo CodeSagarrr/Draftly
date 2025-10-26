@@ -15,7 +15,7 @@ export async function GET(req: NextRequest, { params }: any) {
   const limit = 4;
 
   try {
-    const token = await getToken({ req ,secret : process.env.NEXT_AUTH_SEC});
+    const token = await getToken({ req ,secret : process.env.NEXTAUTH_SECRET });
     if (!token)
       return Response.json({ error: "unauthorize" }, { status: 401 });
     

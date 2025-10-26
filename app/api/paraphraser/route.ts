@@ -11,7 +11,7 @@ export async function POST(req: NextRequest) {
   const { language, tone, text }: ParaphrasingProps = await req.json();
   if (!text)
     return Response.json({ error: "Field are missing " }, { status: 200 });
-  const token = await getToken({ req , secret : process.env.NEXT_AUTH_SEC});
+  const token = await getToken({ req , secret : process.env.NEXTAUTH_SECRET});
     if (!token)
       return Response.json({ error: "unauthorize" }, { status: 401 });
   try {
