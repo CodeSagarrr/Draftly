@@ -11,13 +11,21 @@ const selectParams = {
 };
 
 export async function GET(req: NextRequest, { params }: any) {
+  const cookieName =
+    process.env.NODE_ENV === "production"
+      ? "__Secure-authjs.session-token"
+      : "authjs.session-token";
   const { slug } = await params;
   const skipNum = Number(slug) || 1;
   const limit = 4;
   try {
-    const token = await getToken({ req , secret : process.env.NEXTAUTH_SECRET });
-    if (!token)
-      return Response.json({ error: token }, { status: 401 });
+    const token = await getToken({
+      req,
+      secret: process.env.NEXTAUTH_SECRET,
+      cookieName: cookieName,
+      secureCookie: process.env.NODE_ENV === "production",
+    });
+    if (!token) return Response.json({ error: token }, { status: 401 });
 
     const totalDocument = await prisma.email.count({
       where: { userId: token?.sub },
