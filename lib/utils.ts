@@ -498,8 +498,8 @@ export const EmailTemplates = [
 export const CopyText = (result: string) => {
   if (result) {
     navigator.clipboard.writeText(result);
-    toast.success("Your email text has copied!");
+    toast.success("Your text has copied!");
   } else {
-    toast.error("Email has not copied!");
+    toast.error(" not copied!");
   }
 };
