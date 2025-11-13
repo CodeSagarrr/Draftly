@@ -22,12 +22,10 @@ export async function POST(req: NextRequest) {
   const token = await getToken({
     req,
     secret: process.env.NEXTAUTH_SECRET,
-    cookieName: cookieName,
+    cookieName:cookieName,
     secureCookie: process.env.NODE_ENV === "production",
   });
   if (!token) return Response.json({ error: "unauthorize" }, { status: 401 });
-
-  console.log(token);
 
   const { to, subject, text } = await req.json();
   if (!to || !subject)
@@ -37,7 +35,7 @@ export async function POST(req: NextRequest) {
     );
   try {
     const mail = {
-      from: `${token.name} <${token.email}>`,
+      from: `"${token.email} (via Draftly)" <${process.env.USER_EMAIL}>`,
       to: to,
       subject: subject,
       text: text,
@@ -52,7 +50,7 @@ export async function POST(req: NextRequest) {
 
     const result = await prisma.sendto.create({
       data: {
-        from: `${token.name} <${token.email}>`,
+        from: `"${token.email} (via Draftly)" <draftly@gmail.com>`,
         to,
         subject,
         text,
