@@ -50,7 +50,7 @@ export async function POST(req: NextRequest) {
 
     const result = await prisma.sendto.create({
       data: {
-        from: `"${token.email} (via Draftly)" <draftly@gmail.com>`,
+        from: `"${token.email} (via Draftly)" <${process.env.USER_EMAIL}>`,
         to,
         subject,
         text,
